@@ -93,7 +93,7 @@ static uint32_t count_segments(uint16_t *sequence, uint16_t sequence_length) {
   (rather obviously) 2.
 
   received_data should point to a buffer that can hold as many bytes as there are I2C_READ operations in the
-  sequence. If there are not reads, 0 can be passed, as this parameter will not be used.
+  sequence. If there are no reads, 0 can be passed, as this parameter will not be used.
 */
 int i2c_send_sequence(int handle, uint16_t *sequence, uint16_t sequence_length, uint8_t *received_data) {
   struct i2c_rdwr_ioctl_data message_sequence;
