@@ -103,7 +103,7 @@ int i2c_send_sequence(int handle, uint16_t *sequence, uint32_t sequence_length, 
   /* msg_buf needs to hold all *bytes written* in the entire sequence. Since it is difficult to estimate that number
      without processing the sequence, we make an upper-bound guess: sequence_length. Yes, this is inefficient, but
      optimizing this doesn't seem to be worth the effort. */
-  uint8_t *msg_buf = malloc(sequence_length * sizeof(uint8_t)); /* certainly no more than that */
+  uint8_t *msg_buf = malloc(sequence_length); /* certainly no more than that */
   uint8_t *msg_cur_buf_ptr = msg_buf;
   uint8_t *msg_cur_buf_base;
   uint32_t msg_cur_buf_size;
