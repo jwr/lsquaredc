@@ -22,7 +22,7 @@ Obviously, the limitations that the Linux kernel imposes also apply: this librar
 
 # Rationale
 
-When I tried accessing I2C on my Beaglebone Black, I was sure it would be obvious. Well, I was wrong. It turned out that the usual way is to read/write data using read() and write() calls, which doesn't support restarts. And if one needs repeated start, there is an ioctl with an entirely different and difficult to use interface.
+When I tried accessing I2C on my BeagleBone Black, I was sure it would be obvious. Well, I was wrong. It turned out that the usual way is to read/write data using read() and write() calls, which doesn't support restarts. And if one needs repeated start, there is an ioctl with an entirely different and difficult to use interface.
 
 This library is not something I expected to write, but since I had to, I'm releasing it in the hope that it will save others time and frustration.
 
@@ -69,7 +69,37 @@ If you wonder why I consider the Bus Pirate convention useful, note that what yo
 
 # Devices
 
-I use this code on a Beaglebone Black and a Raspberry Pi. On my BeagleBone Black, pins 19 and 20 on the header correspond to I2C bus 1, but I'm told this can depend on the order in which the kernel chooses to enumerate the busses (oh, the insanity!).
+I tested this code on a BeagleBone Black and a Raspberry Pi.
+
+## BeagleBone Black
+
+On my BeagleBone Black, pins 19 and 20 on the header correspond to I2C bus 1, but I'm told this can depend on the order in which the kernel chooses to enumerate the busses (oh, the insanity!).
+
+With the default BeagleBone Black, it is enough to compile the example and run it. BeagleBone ships with a working Linux distribution that includes working I2C.
+
+## Raspberry Pi
+
+I tried the official Raspbian (Debian Wheezy) image, which was rather disappointing. I2C is disabled by default (what is wrong with you people?). So I downloaded i2c-tools:
+
+	sudo apt-get install i2c-tools
+
+Then I edited `/etc/modprobe.d/raspi-blacklist.conf`, which blacklists the spi and i2c modules. I removed the line containing `i2c-bcm2708`.
+
+I then added `i2c-dev` to /etc/modules and rebooted.
+
+After these steps, the example worked, but I had to change the bus number to 0 and run the example as root using sudo, because the `/dev/i2c-0` permissions only allow the root user to access the devices (huh?).
+
+```
+pi@raspberrypi ~ $ sudo ./example
+Opened bus, result=3
+Sequence processed, result=1
+Sequence processed, result=1
+Sequence processed, result=2
+Status=151
+pi@raspberrypi ~ $
+```
+
+## Other devices
 
 Theoretically, this code should also work on any Linux system that has an I2C bus and a driver that supports it and exports a /dev/i2c interface. But, quoting Albert Eistein, “In theory, theory and practice are the same. In practice, they are not.”
 
