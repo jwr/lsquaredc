@@ -16,7 +16,7 @@ MIT. I believe in freedom, which means I believe in letting you do whatever you 
 
 # Limitations
 
-Only master mode is implemented. Only 7-bit addressing is supported. Addressing is fully manual: it is your responsibility to shift the 7-bit I2C address to the left and add the R/W bit.
+Only master mode is implemented. Only 7-bit addressing is supported. Addressing is fully manual: it is your responsibility to shift the 7-bit I2C address to the left and add the R/W bit (actually, I see this as an advantage).
 
 Obviously, the limitations that the Linux kernel imposes also apply: this library has no way of setting the interface speed, for example.
 
@@ -37,8 +37,8 @@ to specify that.
 `i2c_send_sequence()` takes four parameters:
 
 * `handle` is the handle returned from `i2c_open()`
-* `sequence` is the I2C operation sequence that should be performed. It can include any number of writes, restarts and reads. Note that the sequence is composed of `uint16_t`, not `uint8_t`. This is because we have to support out-of-band signalling of `I2C_RESTART` and `I2C_READ` operations, while still passing through 8-bit data.
-* `sequence_length` is the number of sequence elements (not bytes). Sequences of length up to 65535 are supported, but   there is an upper limit on the number of segments (restarts): no more than 42. The minimum sequence length is   (rather obviously) 2.
+* `sequence` is the I2C operation sequence that should be performed. It can include any number of writes, restarts and reads. Note that the sequence is composed of `uint16_t`, not `uint8_t` elements. This is because we have to support out-of-band signalling of `I2C_RESTART` and `I2C_READ` operations, while still passing through 8-bit data.
+* `sequence_length` is the number of sequence elements (not bytes). Sequences of arbitrary (well, 32-bit) length are supported, but there is an upper limit on the number of segments (restarts): no more than 42. This limit is imposed by the Linux ioctl() I2C interface. The minimum sequence length is (rather obviously) 2.
 * `received_data` should point to a buffer that can hold as many bytes as there are `I2C_READ` operations in the   sequence. If there are no reads, 0 can be passed, as this parameter will not be used.
 
 `i2c_send_sequence()` uses the Bus Pirate I2C convention, which I found to be very useful and compact. As an example, this
@@ -72,3 +72,11 @@ If you wonder why I consider the Bus Pirate convention useful, note that what yo
 I use this code on a Beaglebone Black and a Raspberry Pi. On my BeagleBone Black, pins 19 and 20 on the header correspond to I2C bus 1, but I'm told this can depend on the order in which the kernel chooses to enumerate the busses (oh, the insanity!).
 
 Theoretically, this code should also work on any Linux system that has an I2C bus and a driver that supports it and exports a /dev/i2c interface. But, quoting Albert Eistein, “In theory, theory and practice are the same. In practice, they are not.”
+
+# Building and Packaging
+
+You can build the example by simply doing:
+
+	gcc -o lsquaredc-example example.c lsquaredc.c
+
+Packaging? Come on. What packaging? Just put those two files in your project. Or put the git repo in as a subproject. Or package it any way you wish — but I'm afraid I won't be able to help.
