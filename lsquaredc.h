@@ -32,7 +32,7 @@
 
 int i2c_open(uint8_t bus);
 
-int i2c_send_sequence(int handle, uint16_t *sequence, uint16_t sequence_length, uint8_t *received_data);
+int i2c_send_sequence(int handle, uint16_t *sequence, uint32_t sequence_length, uint8_t *received_data);
 
 int i2c_close(int handle);
 

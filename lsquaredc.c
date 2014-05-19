@@ -65,7 +65,7 @@ int i2c_open(uint8_t bus) {
    linked list. This means that we have to go through the sequence once just to count how many messages there will be,
    before we allocate memory for message buffers.
 */
-static uint32_t count_segments(uint16_t *sequence, uint16_t sequence_length) {
+static uint32_t count_segments(uint16_t *sequence, uint32_t sequence_length) {
   uint32_t number_of_segments = 1; /* there is always at least one segment */
   uint32_t i;
 
@@ -88,14 +88,14 @@ static uint32_t count_segments(uint16_t *sequence, uint16_t sequence_length) {
   reads. Note that the sequence is composed of uint16_t, not uint8_t. This is because we have to support out-of-band
   signalling of I2C_RESTART and I2C_READ operations, while still passing through 8-bit data.
 
-  sequence_length is the number of sequence elements (not bytes). Sequences of length up to 65535 are supported, but
+  sequence_length is the number of sequence elements (not bytes). Sequences of arbitrary length are supported, but
   there is an upper limit on the number of segments (restarts): no more than 42. The minimum sequence length is
   (rather obviously) 2.
 
   received_data should point to a buffer that can hold as many bytes as there are I2C_READ operations in the
   sequence. If there are no reads, 0 can be passed, as this parameter will not be used.
 */
-int i2c_send_sequence(int handle, uint16_t *sequence, uint16_t sequence_length, uint8_t *received_data) {
+int i2c_send_sequence(int handle, uint16_t *sequence, uint32_t sequence_length, uint8_t *received_data) {
   struct i2c_rdwr_ioctl_data message_sequence;
   uint32_t number_of_segments = count_segments(sequence, sequence_length);
   struct i2c_msg *messages = malloc(number_of_segments * sizeof(struct i2c_msg));
@@ -106,10 +106,10 @@ int i2c_send_sequence(int handle, uint16_t *sequence, uint16_t sequence_length, 
   uint8_t *msg_buf = malloc(sequence_length * sizeof(uint8_t)); /* certainly no more than that */
   uint8_t *msg_cur_buf_ptr = msg_buf;
   uint8_t *msg_cur_buf_base;
-  uint16_t msg_cur_buf_size;
+  uint32_t msg_cur_buf_size;
   uint8_t address;
   uint8_t rw;
-  uint16_t i;
+  uint32_t i;
   int result = -1;
 
   if(sequence_length < 2) goto i2c_send_sequence_cleanup;
