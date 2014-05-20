@@ -26,7 +26,20 @@ When I tried accessing I2C on my BeagleBone Black, I was sure it would be obviou
 
 This library is not something I expected to write, but since I had to, I'm releasing it in the hope that it will save others time and frustration.
 
+# Download
+
+Get it directly from the [Github repository](https://github.com/jwr/lsquaredc).
+
 # Usage
+
+Here's an example of performing a write and then a read with repeated start (restart) from an MMA8453Q accelerometer with a 7-bit address of 0x1c:
+
+```
+    uint16_t mma8453_read_interrupt_source[] = {0x38, 0x0c, I2C_RESTART, 0x39, I2C_READ};
+    uint8_t status;
+    int handle = i2c_open(1);
+    i2c_send_sequence(handle, mma8453_read_interrupt_source, 5, &status);
+```
 
 First, `i2c_open()` needs to be called. The supplied bus number corresponds to Linux I2C bus numbering: e.g. for "/dev/i2c-1" use bus number 1. Also checks if the device actually supports I2C. Returns the handle which should subsequently be used with   `i2c_send_sequence()`, or a negative number in case of an error.
 
@@ -89,14 +102,16 @@ I then added `i2c-dev` to /etc/modules and rebooted.
 
 After these steps, the example worked, but I had to change the bus number to 0 and run the example as root using sudo, because the `/dev/i2c-0` permissions only allow the root user to access the devices (huh?).
 
+Example output:
+
 ```
-pi@raspberrypi ~ $ sudo ./example
-Opened bus, result=3
-Sequence processed, result=1
-Sequence processed, result=1
-Sequence processed, result=2
-Status=151
-pi@raspberrypi ~ $
+    pi@raspberrypi ~ $ sudo ./example
+    Opened bus, result=3
+    Sequence processed, result=1
+    Sequence processed, result=1
+    Sequence processed, result=2
+    Status=151
+    pi@raspberrypi ~ $
 ```
 
 ## Other devices
