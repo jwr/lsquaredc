@@ -6,6 +6,8 @@ Lsquaredc is a tiny Linux library that allows you to access I2C (IIC, I²C, or I
 
 MIT. I believe in freedom, which means I believe in letting you do whatever you want with this code.
 
+If you like the code and find it useful, please take a look at PartsBox (https://partsbox.com/), my app that lets you take control of your electronic parts inventory, parts ordering/purchasing, BOM pricing, and production.
+
 # Features
 
 * Small.
